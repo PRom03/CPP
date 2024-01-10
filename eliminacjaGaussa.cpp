@@ -9,7 +9,6 @@ class Max{
 		int q;
 		void colMax(vector<vector<double>>&A,int j,int n);
 		void rowMax(vector<vector<double>>&A,int i,int n);
-		void fullMax(vector<vector<double>>&A,int n,int krok);
 		void swapX(vector<int>swappedX,double x[]);
 };
 void showEquationCoeffs(vector<vector<double>>A,vector<double>B, int n)
@@ -21,16 +20,16 @@ void showEquationCoeffs(vector<vector<double>>A,vector<double>B, int n)
 		cout<<B[i]<<endl;
 	}
 }
-void elimStep(vector<vector<double>>&A,vector<double>&B,int n, int krok)
+void elimStep(vector<vector<double>>&A,vector<double>&B,int n, int step)
 {
-	for(int i=krok+1;i<n;i++)
+	for(int i=step+1;i<n;i++)
 	{
-		double p=A[i][krok]/A[krok][krok];
+		double p=A[i][step]/A[step][step];
 		for(int j=0;j<n;j++)
 		{
-			A[i][j]=A[i][j]-p*A[krok][j];
+			A[i][j]=A[i][j]-p*A[step][j];
 		}
-		B[i]=B[i]-p*B[krok];
+		B[i]=B[i]-p*B[step];
 	}
 }
 void backSub(double x[],vector<vector<double>>&A,vector<double>&B,int n)
@@ -70,32 +69,17 @@ void Max::rowMax(vector<vector<double>>&A,int i,int n)
 		}
 	}
 }
-void rowSwap(vector<vector<double>>&A,vector<double>&B,int krok,int i)
+void rowSwap(vector<vector<double>>&A,vector<double>&B,int step,int i)
 {
-	swap(A[i],A[krok]);
-	swap(B[i],B[krok]);
+	swap(A[i],A[step]);
+	swap(B[i],B[step]);
 }
-void colSwap(vector<vector<double>>&A,int krok,int j,int n)
+void colSwap(vector<vector<double>>&A,int step,int j,int n)
 {
-	for(int k=krok;k<n;k++)
+	for(int k=step;k<n;k++)
 	{
-		swap(A[k][krok],A[k][j]);
+		swap(A[k][step],A[k][j]);
 	}
-}
-void Max::fullMax(vector<vector<double>>&A,int n,int krok)
-{
-	this->max=0;
-	for(int i=krok;i<n;i++)
-	{
-		for(int j=krok;j<n;j++)
-		{
-			if(abs(A[i][j])>abs(this->max)){
-			this->max=A[i][j];
-			this->p=i;
-			this->q=j;
-			}
-		}
-	}	
 }
 void Max::swapX(vector<int>swappedX,double x[])
 {
@@ -104,30 +88,29 @@ void Max::swapX(vector<int>swappedX,double x[])
 		swap(x[swappedX[i]],x[swappedX[i+1]]);
 	}
 }
-
 int main()
 {
 	vector<vector<double>>A;
 	vector<double>B;
 	vector<int>swappedX;
-	vector<double>pom;
-	int n=4,wybDane;
-	cout<<"Jesli chcesz uzyc domyslnych danych testowych, wybierz 1. Jesli chcesz wprowadzic dane testowe, wybierz 2.\n";
-	cin>>wybDane;
+	vector<double>auxil;
+	int n=4,dataChoose;
+	cout<<"If you want to use default test data, choose 1. Else, if you want to put test data in, choose 2.\n";
+	cin>>dataChoose;
 	Max Max;
 	double a,b,x[n];
-	switch(wybDane)
+	switch(dataChoose)
 	{
 		case 1:
 			A={{2.25,-2.5,4,-5.25},{-3,-7.5,6.5,0},{-6.25,-12.5,0.25,5.25},{9,10,7,-21}};
 			B={-1,17,24.25,-33};
 			break;
 		case 2:
-			cout<<"Podaj wymiar macierzy:";
+			cout<<"Give matrix size:";
 			cin>>n;
-			cout<<"Podaj wspolczynniki:"<<endl;
+			cout<<"Give coefficients:"<<endl;
 			for(int i=0;i<n;i++){
-				A.push_back(pom);
+				A.push_back(auxil);
 				for(int j=0;j<n;j++){
 					cin>>a;
 					A[i].push_back(a);			
@@ -137,13 +120,13 @@ int main()
 			}		
 			break;
 	}
-	cout<<"Wybierz rodzaj eliminacji Gaussa:\n1 - podstawowy, 2 - z wyb. el. max. w kolumnie, 3 - z wyb. el. max w wierszu, 4 - z pelnym wyb. el. max.\n";
+	cout<<"Choose Gauss elimination mode:\n1 - basic, 2 - with choose of max elem. in a column, 3 - with choose of max elem. in a row, 4 - with full choose of max elem.\n";
 	int wybMetod;
 	bool stepFail=false;
 	cin>>wybMetod;
 	for(int i=0;i<n-1;i++){
 		if(abs(A[i][i])<=1e-7){
-			cout<<"Nie mozna wykonac kroku eliminacji Gaussa."<<endl;
+			cout<<"Cannot take a step."<<endl;
 			stepFail=true;
 			break;
 		}
@@ -176,7 +159,7 @@ int main()
 	}
 	showEquationCoeffs(A,B,n);
 	if((abs(A[n-1][n-1])<=1e-7)||stepFail==true){
-		cout<<"Nie mozna wykonac postepowania odwrotnego."<<endl;
+		cout<<"Cannot execute the back substitution."<<endl;
 	}
 	else{
 		backSub(x,A,B,n);
