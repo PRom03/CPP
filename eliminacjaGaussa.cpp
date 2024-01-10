@@ -9,7 +9,6 @@ class Max{
 		int q;
 		void colMax(vector<vector<double>>&A,int j,int n);
 		void rowMax(vector<vector<double>>&A,int i,int n);
-		void swapX(vector<int>swappedX,double x[]);
 };
 void showEquationCoeffs(vector<vector<double>>A,vector<double>B, int n)
 {
@@ -81,7 +80,7 @@ void colSwap(vector<vector<double>>&A,int step,int j,int n)
 		swap(A[k][step],A[k][j]);
 	}
 }
-void Max::swapX(vector<int>swappedX,double x[])
+void swapX(vector<int>swappedX,double x[])
 {
 	for(int i=0;i<swappedX.size();i=i+2)
 	{
@@ -163,7 +162,7 @@ int main()
 	}
 	else{
 		backSub(x,A,B,n);
-		Max.swapX(swappedX,x);
+		swapX(swappedX,x);
 		cout<<"x=[";
 		for(int i=0;i<n;i++){
 			(i==0)?cout<<x[i]:cout<<","<<x[i];
